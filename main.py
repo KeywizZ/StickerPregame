@@ -116,7 +116,7 @@ class StickerGoblinApp(tk.Tk):
                 try:
                     img_path = resource_path(c["image"])
                     im = Image.open(img_path)
-                    im.thumbnail((400, 200), Image.LANCZOS)
+                    im.thumbnail((500, 300), Image.LANCZOS)
                     self.sheet_images[c["sheet"]] = ImageTk.PhotoImage(im)  # <-- store
                 except Exception:
                     # If a specific image fails, skip to text fallback
