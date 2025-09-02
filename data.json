@@ -3,90 +3,90 @@
         "sheet" : 1,
         "image" : "images/1.png",
         "stickers" : [
-            {"word" : "Eldrazi", "Vowels" : 3},
-            {"word" : "Guacamole", "Vowels" : 4},
-            {"word" : "Tightrope", "Vowels" : 3}
+            {"word" : "Eldrazi", "vowels" : 3},
+            {"word" : "Guacamole", "vowels" : 4},
+            {"word" : "Tightrope", "vowels" : 3}
         ]
     },
     {
         "sheet" : 5,
         "image" : "images/5.png",
         "stickers" : [
-            {"word" : "Misunderstood", "Vowels" : 4},
-            {"word" : "Trapeze", "Vowels" : 2},
-            {"word" : "Elf", "Vowels" : 1}
+            {"word" : "Misunderstood", "vowels" : 4},
+            {"word" : "Trapeze", "vowels" : 2},
+            {"word" : "Elf", "vowels" : 1}
         ]
     },
     {
         "sheet" : 12,
         "image" : "images/12.png",
         "stickers" : [
-            {"word" : "Narrow-Minded", "Vowels" : 4},
-            {"word" : "Baloney", "Vowels" : 4},
-            {"word" : "Fireworks", "Vowels" : 3}
+            {"word" : "Narrow-Minded", "vowels" : 4},
+            {"word" : "Baloney", "vowels" : 4},
+            {"word" : "Fireworks", "vowels" : 3}
         ]
     },
     {
         "sheet" : 13,
         "image" : "images/13.png",
         "stickers" : [
-            {"word" : "Unsanctioned", "Vowels" : 5},
-            {"word" : "Ancient", "Vowels" : 3},
-            {"word" : "Juggler", "Vowels" : 2}
+            {"word" : "Unsanctioned", "vowels" : 5},
+            {"word" : "Ancient", "vowels" : 3},
+            {"word" : "Juggler", "vowels" : 2}
         ]
     },
     {
         "sheet" : 18,
         "image" : "images/18.png",
         "stickers" : [
-            {"word" : "Phyrexian", "Vowels" : 4},
-            {"word" : "Midway", "Vowels" : 3},
-            {"word" : "Bamboozle", "Vowels" : 3}
+            {"word" : "Phyrexian", "vowels" : 4},
+            {"word" : "Midway", "vowels" : 3},
+            {"word" : "Bamboozle", "vowels" : 3}
         ]
     },
     {
         "sheet" : 23,
         "image" : "images/23.png",
         "stickers" : [
-            {"word" : "Ancestral", "Vowels" : 2},
-            {"word" : "Hot Dog", "Vowels" : 1},
-            {"word" : "Minotaur", "Vowels" : 4}
+            {"word" : "Ancestral", "vowels" : 2},
+            {"word" : "Hot Dog", "vowels" : 1},
+            {"word" : "Minotaur", "vowels" : 4}
         ]
     },
     {
         "sheet" : 30,
         "image" : "images/30.png",
         "stickers" : [
-            {"word" : "Playable", "Vowels" : 2},
-            {"word" : "Delusionary", "Vowels" : 6},
-            {"word" : "Hydra", "Vowels" : 2}
+            {"word" : "Playable", "vowels" : 2},
+            {"word" : "Delusionary", "vowels" : 6},
+            {"word" : "Hydra", "vowels" : 2}
         ]
     },
     {
         "sheet" : 36,
         "image" : "images/36.png",
         "stickers" : [
-            {"word" : "Unassuming", "Vowels" : 3},
-            {"word" : "Gelatinous", "Vowels" : 5},
-            {"word" : "Serpent", "Vowels" : 1}
+            {"word" : "Unassuming", "vowels" : 3},
+            {"word" : "Gelatinous", "vowels" : 5},
+            {"word" : "Serpent", "vowels" : 1}
         ]
     },
     {
         "sheet" : 45,
         "image" : "images/45.png",
         "stickers" : [
-            {"word" : "Unglued", "Vowels" : 2},
-            {"word" : "Pea-Brained", "Vowels" : 3},
-            {"word" : "Dinosaur", "Vowels" : 4}
+            {"word" : "Unglued", "vowels" : 2},
+            {"word" : "Pea-Brained", "vowels" : 3},
+            {"word" : "Dinosaur", "vowels" : 4}
         ]
     },
     {
         "sheet" : 14,
         "image" : "images/14.png",
         "stickers" : [
-            {"word" : "Deep-fried", "Vowels" : 2},
-            {"word" : "Plague", "Vowels" : 3},
-            {"word" : "Myr", "Vowels" : 1}
+            {"word" : "Deep-fried", "vowels" : 2},
+            {"word" : "Plague", "vowels" : 3},
+            {"word" : "Myr", "vowels" : 1}
         ]
     }
 ]

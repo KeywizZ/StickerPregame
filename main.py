@@ -4,40 +4,22 @@ from pathlib import Path
 import tkinter as tk
 from tkinter import ttk
 
-# pip install pillow 
-try: 
-    from PIL import Image, ImageTK
+# pip install pillow
+try:
+    from PIL import Image, ImageTk   
     PIL_AVAILABLE = True
 except Exception:
     PIL_AVAILABLE = False
 
+DATA_JSON = "data.json"
 
-# -- Packaging helper -- 
+# -- Packaging helper --
 def resource_path(rel_path: str) -> str:
     try:
-        base_path = sys._MEIPASS
+        base_path = sys._MEIPASS  # type: ignore[attr-defined]
     except Exception:
         base_path = os.path.abspath(".")
     return os.path.join(base_path, rel_path)
-
-
-def load_sheets(json_path: str):
-    with open(resource_path(json_path), "r", encoding="utf-8") as f:
-        sheets = json.load(f)
-
-    stickerList = []
-    for sheet in sheets:
-        sheetImgPath = resource_path(sheet["image"])
-        for s in sheet["stickers"]:
-            word = s["Word"]
-            vowels = s["Vowels"]
-            stickerList.append({
-                "Word": word,
-                "Vowels": vowels,
-                "sheet": sheet[sheet],
-                "image" : sheetImgPath
-            })
-    return sheets, stickerList
 
 
 class StickerGoblinApp(tk.Tk):
@@ -56,21 +38,20 @@ class StickerGoblinApp(tk.Tk):
         main = ttk.Frame(self, padding=(12, 10))
         main.pack(fill="both", expand=True)
 
-        # Left: Do we build an image preview?
+        # Left: image previews
         left = ttk.Frame(main)
         left.pack(side="left", fill="both", expand=True)
 
         slots = ttk.Frame(left)
         slots.pack(pady=10)
 
-        # Placeholders
         self.img_labels = []
         for i in range(3):
             lbl = ttk.Label(slots, text=f"[slot {i+1}]", width=32, anchor="center")
             lbl.pack(side="left", padx=8, pady=8)
             self.img_labels.append(lbl)
 
-        # Right: results text area
+        # Right: results
         right = ttk.Frame(main, width=320)
         right.pack(side="right", fill="y")
         ttk.Label(right, text="Result", font=("Segoe UI", 12, "bold")).pack(anchor="w")
@@ -78,7 +59,7 @@ class StickerGoblinApp(tk.Tk):
         self.result.pack(fill="y", pady=(6, 0))
         self.result.configure(state="disabled")
 
-        # Bottom: buttons
+        # Bottom: button
         footer = ttk.Frame(self, padding=12)
         footer.pack(fill="x")
         self.pick_btn = ttk.Button(footer, text="Press to get stickers!", command=self.on_press)
@@ -86,56 +67,132 @@ class StickerGoblinApp(tk.Tk):
 
         # State
         self.animating = False
-        
-        # If PIL is not available, warn
-        if not PIL_AVAILABLE: 
+        self.cards = []          
+        self.sheet_images = {}
+
+        # Load data + images, then show placeholders
+        self._load_cards(DATA_JSON)
+        self._show_placeholders()
+
+        if not PIL_AVAILABLE:
             self._write_result("Pillow not found. Install with: pip install pillow\n"
                                "You can still test UI; images will appear later.")
 
+    def _load_cards(self, json_file: str):
+        path = resource_path(json_file)
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception as ex:
+            self._write_result(f"Failed to load {json_file}:\n{ex}")
+            return
+
+        self.cards = []
+        for card in data:
+            sheet = card.get("sheet")
+            image = card.get("image")
+            stickers = card.get("stickers", [])
+
+            if sheet is None or image is None or not isinstance(stickers, list):
+                continue
+
+            cleaned = []
+            for s in stickers:
+                v = s.get("vowels", s.get("Vowels"))
+                if "word" in s and v is not None:
+                    cleaned.append({"word": s["word"], "vowels": v})
+            if not cleaned:
+                continue
+
+            self.cards.append({
+                "sheet": sheet,
+                "image": image,
+                "stickers": cleaned
+            })
+
+        # Preload images if Pillow is available
+        if PIL_AVAILABLE:
+            for c in self.cards:
+                try:
+                    img_path = resource_path(c["image"])
+                    im = Image.open(img_path)
+                    im.thumbnail((400, 200), Image.LANCZOS)
+                    self.sheet_images[c["sheet"]] = ImageTk.PhotoImage(im)  # <-- store
+                except Exception:
+                    # If a specific image fails, skip to text fallback
+                    pass
+
+    def _show_placeholders(self):
+        shown = random.sample(self.cards, min(3, len(self.cards))) if self.cards else []
+        for lbl, card in zip(self.img_labels, shown):
+            self._set_label_image(lbl, card)
+        for i in range(len(shown), 3):
+            self.img_labels[i].config(text=f"[slot {i+1}]")
+            self.img_labels[i].image = None
+
+    def _set_label_image(self, lbl: ttk.Label, card: dict):
+        sheet = card["sheet"]
+        if PIL_AVAILABLE and sheet in self.sheet_images:
+            pi = self.sheet_images[sheet]
+            lbl.config(image=pi, text="")
+            lbl.image = pi
+        else:
+            lbl.config(text=f"[sheet {sheet}]", image="")
+            lbl.image = None
+
     def on_press(self):
-        if self.animating:
+        if self.animating or len(self.cards) < 3:
             return
         self.animating = True
         self.pick_btn.state(["disabled"])
 
-        # Shuffle animation?
-        frames = 12
-        delay = 40 
+        # Simple shuffle animation
+        frames = 14
+        delay = 35  # ms
 
         def tick(i=0):
-                if i < frames:
-                    for idx, lbl in enumerate(self.img_labels, start=1):
-                        lbl.config(text=f"shuffling {i+1}…")
-                    self.after(delay, lambda: tick(i + 1))
-                else:
-                    self.show_result()
+            if i < frames:
+                shown = random.sample(self.cards, 3)
+                for lbl, card in zip(self.img_labels, shown):
+                    self._set_label_image(lbl, card)
+                self.after(delay, lambda: tick(i + 1))
+            else:
+                self.show_result()
 
         tick()
 
     def show_result(self):
-        # For now, just fake 3 “picks”. We’ll wire JSON + images next.
-        words = random.sample(["Eldrazi", "Guacamole", "Tightrope",
-                            "Misunderstood", "Trapeze", "Elf"], 3)
+        # 1) Pick 3 distinct cards
+        chosen_cards = random.sample(self.cards, 3)
 
-        # Update placeholders
-        for lbl, w in zip(self.img_labels, words):
-            lbl.config(text=w)
+        # 2) Show their images
+        for lbl, card in zip(self.img_labels, chosen_cards):
+            self._set_label_image(lbl, card)
 
-        # Vowel count helper (we’ll later use your JSON’s values or compute)
-        def count_vowels(s: str) -> int:
-            return sum(1 for ch in s if ch.lower() in "aeiouy")
+        # 3) Collect 9 words and find the max by 'vowels'
+        all_words = []
+        for card in chosen_cards:
+            for s in card["stickers"]:
+                all_words.append({"word": s["word"], "vowels": s["vowels"], "sheet": card["sheet"]})
 
-        # total = sum(count_vowels(w) for w in words)
-        # lines = ["Your stickers:\n"] + [f"- {w} (vowels: {count_vowels(w)})" for w in words]
-        # lines.append(f"\nTotal vowels: {total}")
-        # self._write_result("\n".join(lines))
+        max_v = max(s["vowels"] for s in all_words)
+        winners = [s for s in all_words if s["vowels"] == max_v]
 
-        counts = {w: count_vowels(w) for w in words}
-        max_count = max(counts.values())
-        candidates = [w for w, c in counts.items() if c == max_count]
-        winner = random.choice(candidates)
+        # 4) Output
+        lines = []
+        lines.append("Selected cards (sheets): " + ", ".join(str(c["sheet"]) for c in chosen_cards))
+        lines.append("\nStickers from these cards:")
+        for s in all_words:
+            lines.append(f"- {s['word']} - {s['vowels']} (sheet {s['sheet']})")
 
-        self._write_result(f"Top vowels: {winner} (vowels: {counts[winner]})")
+        if len(winners) == 1:
+            lines.append(f"\nTop vowel word: {winners[0]['word']} - {winners[0]['vowels']}")
+        else:
+            lines.append("\nTop vowel words (tie):")
+            for w in winners:
+                lines.append(f"- {w['word']} - {w['vowels']} (sheet {w['sheet']})")
+
+        self._write_result("\n".join(lines))
 
         self.animating = False
         self.pick_btn.state(["!disabled"])
