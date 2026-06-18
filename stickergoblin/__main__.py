@@ -1,4 +1,4 @@
-from stickergoblin import StickerGoblinApp
+from stickergoblin.app import StickerGoblinApp
 
 
 def main():

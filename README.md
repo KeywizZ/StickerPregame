@@ -43,6 +43,12 @@ pip install pillow
 python main.py
 ```
 
+Or run as a module:
+
+```bash
+python -m stickergoblin
+```
+
 ## Build the executable
 
 ```bash
@@ -55,13 +61,22 @@ The built app will be at `dist/StickerGoblin.exe`.
 ## Project structure
 
 ```
-StickersPregame/
-├── main.py              # Application source
-├── data.json            # Sticker sheet data (words, vowel counts, image paths)
-├── images/              # Sticker sheet images
-├── assets/              # App icon and artwork
-├── StickerGoblin.spec   # PyInstaller build config
-└── dist/                # Built executable (after build)
+StickerPregame/
+├── main.py                  # Entry point (runs the app)
+├── stickergoblin/           # Application package
+│   ├── __init__.py          # Package exports
+│   ├── __main__.py          # `python -m stickergoblin` entry
+│   ├── app.py               # Main window and game logic
+│   ├── config.py            # Constants, themes, layout sizes
+│   ├── paths.py             # Resource paths and user config
+│   ├── theme.py             # Theme manager (light/dark styling)
+│   ├── widgets.py           # Custom UI widgets (pill toggle, info button, tooltip)
+│   └── images.py            # Pillow availability helper
+├── data.json                # Sticker sheet data (words, vowel counts, image paths)
+├── images/                  # Sticker sheet images
+├── assets/                  # App icon and artwork
+├── StickerGoblin.spec       # PyInstaller build config
+└── dist/                    # Built executable (after build)
 ```
 
 ## Configuration
