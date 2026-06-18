@@ -21,7 +21,7 @@ A small Windows desktop app for picking three random Unfinity name sticker sheet
 
 ## Download
 
-Grab `StickerGoblin.exe` from the [latest release](https://github.com/YOUR_USERNAME/StickersPregame/releases) and run it.
+Grab `StickerGoblin.exe` from the [latest release](https://github.com/KeywizZ/StickerPregame/releases) and run it.
 
 **Requirements:** Windows 10 or later
 
@@ -35,8 +35,8 @@ Grab `StickerGoblin.exe` from the [latest release](https://github.com/YOUR_USERN
 ### Setup
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/StickersPregame.git
-cd StickersPregame
+git clone https://github.com/KeywizZ/StickerPregame.git
+cd StickerPregame
 python -m venv .venv
 .venv\Scripts\activate
 pip install pillow
