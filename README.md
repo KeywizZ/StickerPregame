@@ -1,6 +1,6 @@
 # Sticker Goblin
 
-A small Windows desktop app for picking three random Unfinity name sticker sheets and finding the word with the most vowels.
+A desktop app for picking three random Unfinity name sticker sheets and finding the word with the most vowels. Built for **Windows**, with **Linux** support when running from source.
 
 ![Sticker Goblin](assets/unf-107m-name-sticker-goblin.jpg)
 
@@ -17,22 +17,20 @@ A small Windows desktop app for picking three random Unfinity name sticker sheet
 - **Theme persistence** — your choice is remembered between sessions
 - **Results panel** — sticker names, vowel counts, and highlighted winners
 - **Info tooltip** — after a roll, hover the **ⓘ** icon in the Results panel to see which sheets were drawn and which stickers came from each
-- **Portable `.exe`** — no Python install required
+- **Roll sound** — roulette-style ticks while shuffling (Windows only)
+- **Portable `.exe`** — Windows build, no Python install required
 
-## Download
+## Download (Windows)
 
-Grab `StickerGoblin.exe` from the [latest release](https://github.com/KeywizZ/StickerPregame/releases).
+Grab `StickerGoblin.exe` from the [latest release](https://github.com/KeywizZ/StickerPregame/releases) and run it.
 
 **Requirements:** Windows 10 or later
 
 ## Run from source
 
-### Prerequisites
+### Windows
 
-- Python 3.10+
-- [Pillow](https://pypi.org/project/pillow/)
-
-### Setup
+**Prerequisites:** Python 3.10+, [Pillow](https://pypi.org/project/pillow/)
 
 ```bash
 git clone https://github.com/KeywizZ/StickerPregame.git
@@ -43,13 +41,36 @@ pip install pillow
 python main.py
 ```
 
-Or run as a module:
+Or:
 
 ```bash
 python -m stickergoblin
 ```
 
-## Build the executable
+### Linux
+
+**Prerequisites:** Python 3.10+, Pillow, and Tkinter (`python3-tk` on Debian/Ubuntu)
+
+```bash
+git clone https://github.com/KeywizZ/StickerPregame.git
+cd StickerPregame
+python3 -m venv .venv
+source .venv/bin/activate
+pip install pillow
+python main.py
+```
+
+On Debian/Ubuntu, install Tkinter first if needed:
+
+```bash
+sudo apt install python3-tk
+```
+
+> **Note:** Roll sound is not available on Linux. All other features work the same.
+
+## Build
+
+### Windows
 
 Double-click `build.bat` or run from the project folder:
 
@@ -57,9 +78,7 @@ Double-click `build.bat` or run from the project folder:
 build.bat
 ```
 
-The script creates a venv (if needed), installs dependencies, builds with PyInstaller, and copies **`StickerGoblin.exe`** to the project root.
-
-You can attach `StickerGoblin.exe` to a [GitHub Release](https://github.com/KeywizZ/StickerPregame/releases) when publishing an update. Built `.exe` files are gitignored.
+The script creates a venv (if needed), installs dependencies, builds with PyInstaller, and copies **`StickerGoblin.exe`** to the project root. Attach it to a [GitHub Release](https://github.com/KeywizZ/StickerPregame/releases) when publishing an update. Built `.exe` files are gitignored.
 
 Manual build:
 
@@ -68,6 +87,19 @@ pip install pyinstaller pillow
 pyinstaller StickerGoblin.spec
 copy dist\StickerGoblin.exe StickerGoblin.exe
 ```
+
+### Linux
+
+There is no Linux build script. Run from source (see above), or build a standalone binary with PyInstaller on Linux:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install pyinstaller pillow
+pyinstaller StickerGoblin.spec
+```
+
+The output will be in `dist/StickerGoblin` (no `.exe` extension).
 
 ## Project structure
 
@@ -96,8 +128,16 @@ StickerPregame/
 
 ## Configuration
 
-Theme preference is saved to:
+Theme and sound preferences are saved automatically.
+
+**Windows:**
 
 ```
 %APPDATA%\StickerGoblin\config.json
+```
+
+**Linux (from source):**
+
+```
+<project folder>/config.json
 ```
