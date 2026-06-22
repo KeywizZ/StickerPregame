@@ -10,6 +10,7 @@ env/
 build/
 dist/
 *.spec.bak
+*.exe
 
 # OS / editor
 .DS_Store

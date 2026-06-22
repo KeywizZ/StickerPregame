@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from stickergoblin.config import THEMES
-from stickergoblin.paths import save_config
+from stickergoblin.paths import update_config
 from stickergoblin.widgets import PillToggle
 
 
@@ -19,6 +19,7 @@ class ThemeManager:
             "slot_labels": [],
             "pills": [],
             "info_buttons": [],
+            "speaker_buttons": [],
             "tooltips": [],
         }
 
@@ -37,6 +38,9 @@ class ThemeManager:
     def register_info_button(self, widget):
         self._widgets["info_buttons"].append(widget)
 
+    def register_speaker_button(self, widget):
+        self._widgets["speaker_buttons"].append(widget)
+
     def register_tooltip(self, window: tk.Toplevel, frame: tk.Frame, label: tk.Label):
         self._widgets["tooltips"].append((window, frame, label))
         self._apply_tooltip(window, frame, label)
@@ -50,7 +54,7 @@ class ThemeManager:
         if mode in THEMES:
             self.mode = mode
             self.apply()
-            save_config({"theme": self.mode})
+            update_config(theme=self.mode)
         return self.mode
 
     def toggle(self) -> str:
@@ -124,6 +128,10 @@ class ThemeManager:
             pill.update_visual()
 
         for btn in self._widgets["info_buttons"]:
+            if hasattr(btn, "redraw"):
+                btn.redraw()
+
+        for btn in self._widgets["speaker_buttons"]:
             if hasattr(btn, "redraw"):
                 btn.redraw()
 

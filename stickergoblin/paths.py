@@ -47,3 +47,10 @@ def save_config(data: dict) -> None:
             json.dump(data, f, indent=2)
     except Exception:
         pass
+
+
+def update_config(**kwargs) -> dict:
+    data = load_config()
+    data.update(kwargs)
+    save_config(data)
+    return data

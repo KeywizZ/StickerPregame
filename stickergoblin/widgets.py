@@ -146,3 +146,63 @@ class PillToggle(tk.Frame):
                     bg=c["pill_track"],
                     fg=c["pill_inactive_text"],
                 )
+
+
+class SpeakerToggle(tk.Canvas):
+    WIDTH = 30
+    HEIGHT = 26
+
+    def __init__(self, parent, theme_manager: "ThemeManager", enabled: bool, on_change):
+        super().__init__(
+            parent,
+            width=self.WIDTH,
+            height=self.HEIGHT,
+            highlightthickness=0,
+            bd=0,
+            cursor="hand2",
+        )
+        self.theme = theme_manager
+        self.enabled = enabled
+        self.on_change = on_change
+        self._hover = False
+        self.theme.register_speaker_button(self)
+        self.bind("<Button-1>", self._toggle)
+        self.bind("<Enter>", self._on_enter)
+        self.bind("<Leave>", self._on_leave)
+        self.redraw()
+
+    def _toggle(self, _event=None):
+        self.enabled = not self.enabled
+        self.on_change(self.enabled)
+        self.redraw()
+
+    def _on_enter(self, _event=None):
+        self._hover = True
+        self.redraw()
+
+    def _on_leave(self, _event=None):
+        self._hover = False
+        self.redraw()
+
+    def set_enabled(self, enabled: bool):
+        self.enabled = enabled
+        self.redraw()
+
+    def redraw(self):
+        c = THEMES[self.theme.mode]
+        self.configure(bg=c["header"])
+        self.delete("all")
+
+        fg = c["text"] if self.enabled else c["text_muted"]
+        if self._hover:
+            fg = c["accent"]
+
+        # Speaker body
+        self.create_polygon(5, 10, 9, 10, 13, 7, 13, 19, 9, 16, 5, 16, fill=fg, outline=fg)
+
+        if self.enabled:
+            self.create_arc(14, 8, 21, 18, start=300, extent=120, style=tk.ARC, outline=fg, width=2)
+            self.create_arc(16, 6, 25, 20, start=300, extent=120, style=tk.ARC, outline=fg, width=2)
+        else:
+            self.create_line(15, 7, 25, 21, fill=fg, width=2)
+            self.create_line(25, 7, 15, 21, fill=fg, width=2)

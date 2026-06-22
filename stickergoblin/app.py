@@ -16,9 +16,10 @@ from stickergoblin.config import (
     WINDOW_W,
 )
 from stickergoblin.images import PIL_AVAILABLE, Image, ImageTk
-from stickergoblin.paths import load_config, resource_path
+from stickergoblin.paths import load_config, resource_path, update_config
+from stickergoblin.sound import play_roll_tick, set_sound_enabled
 from stickergoblin.theme import ThemeManager
-from stickergoblin.widgets import CircleInfoButton, HoverTooltip, PillToggle
+from stickergoblin.widgets import CircleInfoButton, HoverTooltip, PillToggle, SpeakerToggle
 
 
 class StickerGoblinApp(tk.Tk):
@@ -33,7 +34,10 @@ class StickerGoblinApp(tk.Tk):
         y = (self.winfo_screenheight() - WINDOW_H) // 2
         self.geometry(f"{WINDOW_W}x{WINDOW_H}+{x}+{y}")
 
-        saved_theme = load_config().get("theme", "light")
+        saved_config = load_config()
+        saved_theme = saved_config.get("theme", "light")
+        sound_on = saved_config.get("sound", True)
+        set_sound_enabled(bool(sound_on))
         self.theme = ThemeManager(self, initial_mode=saved_theme)
 
         # Header
@@ -48,6 +52,14 @@ class StickerGoblinApp(tk.Tk):
             text="Pick three cards — highest vowel count wins!",
             style="Subtitle.TLabel",
         ).pack(anchor="w", pady=(2, 0))
+
+        self.speaker_toggle = SpeakerToggle(
+            header,
+            self.theme,
+            enabled=bool(sound_on),
+            on_change=self._on_sound_change,
+        )
+        self.speaker_toggle.pack(side="right", padx=(0, 10))
 
         self.pill_toggle = PillToggle(header, self.theme, self._on_theme_change)
         self.pill_toggle.pack(side="right")
@@ -171,6 +183,10 @@ class StickerGoblinApp(tk.Tk):
     def _on_theme_change(self, mode: str):
         self.theme.set_mode(mode)
 
+    def _on_sound_change(self, enabled: bool):
+        set_sound_enabled(enabled)
+        update_config(sound=enabled)
+
     def _show_info_btn(self):
         if not self._info_visible:
             self.info_btn.pack(side="right", anchor="e")
@@ -254,6 +270,7 @@ class StickerGoblinApp(tk.Tk):
 
         def tick(i=0):
             if i < frames:
+                play_roll_tick(i)
                 shown = random.sample(self.cards, 3)
                 for lbl, card in zip(self.img_labels, shown):
                     self._set_label_image(lbl, card)
